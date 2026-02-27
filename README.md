@@ -1,6 +1,6 @@
 ## 🦴 概览
 
-- 一个拥有简易GUI 完全基于Mineflayer的免费开源我的世界Bot
+- **一个拥有简易GUI 完全基于Mineflayer的免费开源我的世界Bot**
 
 ## ✨ 核心特色
 
@@ -23,7 +23,7 @@
 **全部在仿真终端内输入，回车即可执行**
 
 - goto x y z 比如 goto 100 64 100            
-- yaw 角度 比如 yaw 90
+- yaw <角度> 比如 yaw 90
 - action right_click / left_click
 
 暂时只有这些，功能基本仅限挂机，做珍珠点Bot等，以后会做升级
@@ -36,22 +36,19 @@
 - 请使用中文清晰描述你遇到的问题，不要含糊其辞或者连ai都听不懂
 - 最好能够有Bug复现方法
 
-## 💼 To Do
+## 💼 未来计划
 
-- Scheduler system to become strictly single-threaded
-- Chunk load/gen to become strictly single-threaded
-- Eneity AI, behavior and pathfinding to become strictly single-threaded
-- Force synchronous IO.
+- bind <玩家名字> 游戏内读取玩家/tell <bot名字> *<命令>指令
+- inv drop/main_hand/off_hand 操控背包
+- action break/place <总循环次数> <间隔> <单次mouse down时间>
+- 自动攻击目标，自动切换工具，复杂ai等
 
-## 🤝 Contributing
+## 🤝 代码贡献
 
 我们非常感谢您对本项目做出的贡献。
 
 请提交一份 issue，分享您出色的工作成果，谢谢！
 
-## ⭐ Please Give a Star
+## ⭐ 请给我们一个 star
 
-Every free ⭐ motivates us to continue working on this project.
-
-
-**!? What's the Point ?!**
+您一个免费的 ⭐ 就是我们继续下去的动力！
