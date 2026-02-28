@@ -112,7 +112,7 @@ public class BotLauncher {
         inputField = new JTextField();
         inputField.setFont(new Font("Monospaced", Font.PLAIN, 14));
         inputField.setBackground(new Color(25, 25, 25));
-        inputField.setForeground(Color.BLACK);
+        inputField.setForeground(Color.WHITE);
         inputField.addActionListener(e -> sendCommand());
 
         //终端输入
@@ -123,8 +123,10 @@ public class BotLauncher {
         //终端按钮
         JPanel btnPanel = new JPanel();
         restartBtn = new JButton("重启 Bot");
+        JButton stopBtn = new JButton("停止 Bot");
         JButton clearBtn = new JButton("清屏");
         btnPanel.add(restartBtn);
+        btnPanel.add(stopBtn);
         btnPanel.add(clearBtn);
 
         panel.add(scroll, BorderLayout.CENTER);
@@ -132,6 +134,7 @@ public class BotLauncher {
         panel.add(btnPanel, BorderLayout.NORTH);
 
         restartBtn.addActionListener(e -> restartBot());
+        stopBtn.addActionListener(e -> stopBot());
         clearBtn.addActionListener(e -> terminalArea.setText(""));
 
         return panel;
@@ -158,7 +161,7 @@ public class BotLauncher {
         BotConfig config = readConfig(new File(dir, "bot.js"));
 
         JDialog dialog = new JDialog(frame, "Bot 配置 - 编辑后点击保存", true);
-        dialog.setSize(700, 380);
+        dialog.setSize(700, 420);
         dialog.setLocationRelativeTo(frame);
         dialog.setLayout(new GridBagLayout());
 
@@ -219,15 +222,25 @@ public class BotLauncher {
         JTextField delayField = new JTextField(String.valueOf(config.loginDelay));
         dialog.add(delayField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy = 5;
+        gbc.weightx = 0;
+        dialog.add(new JLabel("Minecraft 版本（1.21/auto自动）："), gbc);
+
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        JTextField versionField = new JTextField(config.version);
+        dialog.add(versionField, gbc);
+
         JButton saveBtn = new JButton("保存配置并写入");
         saveBtn.setBackground(new Color(0, 150, 0));
         saveBtn.setForeground(Color.BLACK);
-        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 6; gbc.gridwidth = 2;
         dialog.add(saveBtn, gbc);
 
         // 取消按钮
         JButton cancelBtn = new JButton("取消");
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         dialog.add(cancelBtn, gbc);
 
         saveBtn.addActionListener(e -> {
@@ -238,6 +251,7 @@ public class BotLauncher {
                 newConfig.username = userField.getText().trim();
                 newConfig.password = new String(passField.getPassword());
                 newConfig.loginDelay = Integer.parseInt(delayField.getText().trim());
+                newConfig.version = versionField.getText().trim();
 
                 writeConfig(new File(currentConfigDir, "bot.js"), newConfig);
                 JOptionPane.showMessageDialog(dialog, "配置已成功保存到 bot.js！");
@@ -259,6 +273,7 @@ public class BotLauncher {
         String username = "7891";
         String password = "277879113";
         int loginDelay = 3000;
+        String version = "auto";
     }
 
     private BotConfig readConfig(File botJs) {
@@ -277,6 +292,9 @@ public class BotLauncher {
 
             String delayStr = extractValue(content, "loginDelay:\\s*(\\d+)");
             if (!delayStr.isEmpty()) cfg.loginDelay = Integer.parseInt(delayStr);
+
+            cfg.version = extractValue(content, "version:\\s*'([^']*)'");
+
         } catch (Exception ignored) {
         }
         return cfg;
@@ -302,6 +320,7 @@ public class BotLauncher {
                     "  port: " + cfg.port + ", //端口放这里\n" +
                     "  username: '" + cfg.username + "', //玩家名字\n" +
                     "  password: '" + cfg.password + "', //密码\n" +
+                    "  version: '" + cfg.version + "', // 指定 Minecraft 客户端版本，例如 '1.21.1'、'1.8.9' 或 'auto'（自动检测）\n" +
                     "  loginDelay: " + cfg.loginDelay + ", //输入延迟\n\n" +
                     "  stuckCheckInterval: 500,\n" +
                     "  stuckDistance: 0.03,\n" +
@@ -322,6 +341,7 @@ public class BotLauncher {
                 "  port: " + cfg.port + ", //端口放这里\n" +
                 "  username: '" + cfg.username + "', //玩家名字\n" +
                 "  password: '" + cfg.password + "', //密码\n" +
+                "  version: '" + cfg.version + "', // 指定 Minecraft 客户端版本，例如 '1.21.1'、'1.8.9' 或 'auto'（自动检测）\n" +
                 "  loginDelay: " + cfg.loginDelay + ", //输入延迟\n\n" +
                 "  stuckCheckInterval: 500, //卡多少秒判定卡住\n" +
                 "  stuckDistance: 0.03, //不需要知道\n\n" +
@@ -355,6 +375,15 @@ public class BotLauncher {
         if (currentBotDir == null) return;
         terminalArea.append("\n=== 重启 Bot ===\n");
         startBotProcess(currentBotDir);
+    }
+
+    private void stopBot() {
+        if (botProcess != null && botProcess.isAlive()) {
+            botProcess.destroyForcibly();
+            terminalArea.append("\n=== Bot 已停止 ===\n");
+        } else {
+            terminalArea.append("\nBot 未运行。\n");
+        }
     }
 
     private void startWizard() {
