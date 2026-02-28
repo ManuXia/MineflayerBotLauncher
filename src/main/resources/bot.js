@@ -9,6 +9,7 @@ const CONFIG = {
   port: 25565,
   username: '7891',
   password: '277879113',
+  version: 'auto', //可选版本，比如1.21.11
   loginDelay: 3000,
 
   stuckCheckInterval: 600,
@@ -25,7 +26,8 @@ const CONFIG = {
 const bot = mineflayer.createBot({
   host: CONFIG.host,
   port: CONFIG.port,
-  username: CONFIG.username
+  username: CONFIG.username,
+  version: CONFIG.version
 })
 
 bot.loadPlugin(pathfinder)
